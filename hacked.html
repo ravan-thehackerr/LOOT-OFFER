@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hacked</title>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      text-align: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    .face {
+      width: 250px;
+      margin-top: 10%;
+      opacity: 0.9;
+    }
+    .glow {
+      font-size: 2em;
+      text-shadow: 0 0 10px lime, 0 0 20px lime;
+      animation: blink 1s infinite;
+    }
+    #timer {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.1; }
+    }
+    #btn {
+      display: none;
+      margin-top: 30px;
+      font-size: 1em;
+      padding: 10px 20px;
+      background: lime;
+      color: black;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false" onkeydown="return false;">
+  <img class="face" src="https://i.ibb.co/1Y8zZdPJ/fsociety-mr-robot-wallpaper-by-syntaxicek-d9ap3i9-pre.jpg" alt="fsociety" />
+  <h1 class="glow">YOU ARE HACKED!</h1>
+  <p class="glow">System Breach Detected...😈</p>
+  <div id="timer">Access unlocked in <span id="countdown">20</span> seconds</div>
+  <button id="btn" onclick="alert('Ok ok 😂 Chill! It was a prank!')">Click to Recover</button>
+
+  <audio id="beep" autoplay loop>
+    <source src="https://www.soundjay.com/button/beep-10.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let seconds = 20;
+    const countdown = document.getElementById("countdown");
+    const btn = document.getElementById("btn");
+
+    const vibrate = () => {
+      if (navigator.vibrate) {
+        navigator.vibrate([500, 200, 500, 200, 500]);
+      }
+    };
+
+    vibrate();
+
+    const interval = setInterval(() => {
+      seconds--;
+      countdown.textContent = seconds;
+      vibrate();
+      if (seconds <= 0) {
+        clearInterval(interval);
+        btn.style.display = "inline-block";
+        document.getElementById("timer").textContent = "Access Restored";
+        document.querySelector("audio").pause();
+      }
+    }, 1000);
+
+    // Disable back button and scrolling
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      history.go(1);
+    };
+  </script>
+</body>
+</html>
