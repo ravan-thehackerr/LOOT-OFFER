@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Hacked</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
     html, body {
       margin: 0;
@@ -13,6 +13,9 @@
       font-family: monospace;
       overflow: hidden;
       text-align: center;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     .overlay {
@@ -158,13 +161,31 @@
   }
   typeLog();
 
-  // Vibrate effect
+  // Vibrate
   function vibrate() {
     if (navigator.vibrate) {
       navigator.vibrate([300, 100, 300]);
     }
   }
   let vibInterval = setInterval(vibrate, 2500);
+
+  // Block back button
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
+
+  // Try to request fullscreen
+  function goFullScreen() {
+    const el = document.documentElement;
+    const requestFullScreen = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (requestFullScreen) {
+      requestFullScreen.call(el);
+    }
+  }
+
+  // Force fullscreen on load
+  setTimeout(goFullScreen, 1000);
 
   // Scary popup after 3 sec
   setTimeout(() => {
@@ -177,7 +198,6 @@
         clearInterval(counter);
         document.getElementById("popup").style.display = "none";
 
-        // Enable exit button
         clearInterval(vibInterval);
         let btn = document.getElementById("exitBtn");
         btn.disabled = false;
@@ -185,16 +205,15 @@
         btn.innerText = "CLOSE";
         btn.onclick = () => window.close();
 
-        // Auto-redirect to a safe page
+        // Auto-redirect
         window.location.href = "https://google.com";
       }
     }, 1000);
   }, 3000);
 
+  // Play sound
   document.getElementById("scary").play();
 </script>
 
 </body>
 </html>
-
-
