@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Hacked</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: black;
+      padding: 0;
+      background: black;
       color: lime;
       font-family: monospace;
       overflow: hidden;
@@ -18,39 +20,55 @@
       top: 0; left: 0;
       width: 100vw; height: 100vh;
       background: black url('https://i.ibb.co/1Y8zZdPJ/fsociety-mr-robot-wallpaper-by-syntaxicek-d9ap3i9-pre.jpg') center/cover no-repeat;
-      opacity: 0.2;
+      opacity: 0.15;
       z-index: 0;
     }
 
     .message {
+      font-size: 2.5em;
+      margin-top: 12vh;
+      z-index: 2;
       position: relative;
-      z-index: 1;
-      font-size: 2em;
-      margin-top: 10vh;
-      animation: glitch 1s infinite alternate;
+      min-height: 80px;
     }
 
-    @keyframes glitch {
-      0% { text-shadow: 1px 1px red; }
-      25% { text-shadow: -2px 2px lime; }
-      50% { text-shadow: 2px -2px cyan; }
-      75% { text-shadow: -1px -1px yellow; }
-      100% { text-shadow: 2px 2px magenta; }
-    }
-
-    #terminal {
-      margin: 20px auto;
+    .terminal {
       width: 90%;
       max-height: 40vh;
       overflow-y: auto;
-      text-align: left;
-      font-size: 0.9em;
       border: 1px solid lime;
       padding: 10px;
-      background-color: rgba(0, 0, 0, 0.8);
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.8);
+      text-align: left;
+      font-size: 0.9em;
     }
 
-    button {
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: lime;
+      font-size: 2em;
+      text-align: center;
+      z-index: 5;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: shake 0.5s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px); }
+      25% { transform: translate(-1px, -2px); }
+      50% { transform: translate(-3px, 0px); }
+      75% { transform: translate(2px, 2px); }
+      100% { transform: translate(1px, -1px); }
+    }
+
+    #exitBtn {
       font-size: 1.5em;
       padding: 10px 20px;
       background: red;
@@ -61,22 +79,46 @@
       opacity: 0.5;
     }
 
-    .active {
+    #exitBtn.active {
       cursor: pointer;
       opacity: 1;
+    }
+
+    .countdown {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: red;
     }
   </style>
 </head>
 <body>
 
 <div class="overlay"></div>
-<div class="message">☠️ YOU ARE HACKED ☠️</div>
-<div id="terminal"></div>
+<div class="message" id="typedMessage"></div>
+<div class="terminal" id="terminal"></div>
 <button id="exitBtn" disabled>EXIT</button>
+
+<div class="popup" id="popup">
+  <div>☠️ HACKED BY NOBODY ☠️</div>
+  <div class="countdown" id="countdown">Self-destruct in 20</div>
+</div>
 
 <audio id="scary" src="https://www.soundjay.com/human/sounds/scream-01.mp3" autoplay></audio>
 
 <script>
+  // Typing effect
+  const text = "☠️ YOU ARE HACKED ☠️";
+  let i = 0;
+  function typeText() {
+    if (i < text.length) {
+      document.getElementById("typedMessage").textContent += text.charAt(i);
+      i++;
+      setTimeout(typeText, 100);
+    }
+  }
+  typeText();
+
+  // Terminal logs
   const logs = [
     "[*] Injecting payload into system...",
     "[+] Gaining root access...",
@@ -106,7 +148,6 @@
       terminal.scrollTop = terminal.scrollHeight;
       setTimeout(typeLog, 1000);
     } else {
-      // Start looping some messages
       setInterval(() => {
         const loopLine = document.createElement("div");
         loopLine.textContent = "[*] Remote control active...";
@@ -115,26 +156,40 @@
       }, 2000);
     }
   }
-
   typeLog();
 
-  // Vibrate
+  // Vibrate effect
   function vibrate() {
     if (navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]);
+      navigator.vibrate([300, 100, 300]);
     }
   }
-  let vibInterval = setInterval(vibrate, 2000);
+  let vibInterval = setInterval(vibrate, 2500);
 
-  // Enable exit button after 20 sec
+  // Scary popup after 3 sec
   setTimeout(() => {
-    clearInterval(vibInterval);
-    let btn = document.getElementById("exitBtn");
-    btn.disabled = false;
-    btn.classList.add("active");
-    btn.innerText = "CLOSE";
-    btn.onclick = () => window.close();
-  }, 20000);
+    document.getElementById("popup").style.display = "flex";
+    let countdown = 20;
+    const counter = setInterval(() => {
+      countdown--;
+      document.getElementById("countdown").textContent = `Self-destruct in ${countdown}`;
+      if (countdown <= 0) {
+        clearInterval(counter);
+        document.getElementById("popup").style.display = "none";
+
+        // Enable exit button
+        clearInterval(vibInterval);
+        let btn = document.getElementById("exitBtn");
+        btn.disabled = false;
+        btn.classList.add("active");
+        btn.innerText = "CLOSE";
+        btn.onclick = () => window.close();
+
+        // Auto-redirect to a safe page
+        window.location.href = "https://google.com";
+      }
+    }, 1000);
+  }, 3000);
 
   document.getElementById("scary").play();
 </script>
